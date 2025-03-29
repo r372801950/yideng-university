@@ -52,7 +52,7 @@ contract CourseMarket is Ownable {
      * @param _tokenAddress YiDeng代币合约地址
      * @param _certificateAddress 证书NFT合约地址
      */
-    constructor(address _tokenAddress, address _certificateAddress) {
+    constructor(address payable _tokenAddress, address _certificateAddress) {
         yiDengToken = YiDengToken(_tokenAddress);
         certificate = CourseCertificate(_certificateAddress);
     }
@@ -119,7 +119,7 @@ contract CourseMarket is Ownable {
     function verifyCourseCompletion(
         address student,
         string memory web2CourseId
-    ) external onlyOwner {
+    ) public onlyOwner {
         uint256 courseId = web2ToCourseId[web2CourseId];
         require(courseId > 0, "Course does not exist");
         require(userCourses[student][courseId], "Course not purchased");
@@ -156,6 +156,7 @@ contract CourseMarket is Ownable {
                 !certificate.hasCertificate(students[i], web2CourseId)
             ) {
                 verifyCourseCompletion(students[i], web2CourseId);
+                // this.verifyCourseCompletion(students[i], web2CourseId);
             }
         }
     }
