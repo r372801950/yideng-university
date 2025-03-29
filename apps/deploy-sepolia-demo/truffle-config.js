@@ -79,6 +79,9 @@ module.exports = {
       timeoutBlocks: 200,    // 部署超时区块数
       skipDryRun: true       // 跳过模拟运行
     },
+    dashboard: {
+      url: "http://localhost:24012/rpc",
+    },
     //
     // An additional network, but with some advanced options…
     // advanced: {
