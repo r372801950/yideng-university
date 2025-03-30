@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@tanstack/react-query": "^5.70.0",
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
+    "connectkit": "^1.8.2",
     "ethers": "5.7.2",
     "framer-motion": "^12.6.2",
     "i18next": "^24.2.3",
@@ -22,7 +24,9 @@
     "react-i18next": "^15.4.1",
     "react-particles": "^2.12.2",
     "tsparticles": "^3.8.1",
-    "tsparticles-engine": "^2.12.0"
+    "tsparticles-engine": "^2.12.0",
+    "viem": "2.x",
+    "wagmi": "^2.14.15"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

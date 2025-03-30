@@ -9,6 +9,7 @@ import zh from "../public/locales/zh.json";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import type { Container } from "@tsparticles/engine";
+import {Web3Provider} from "@/components/Web3Provider";
 
 i18n.use(initReactI18next).init({
     resources: {
@@ -40,6 +41,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
+            <Web3Provider>
                 <I18nextProvider i18n={i18n}>
                     <div className="relative min-h-screen">
                         {init && (
@@ -74,6 +76,7 @@ export default function RootLayout({
                         {children}
                     </div>
                 </I18nextProvider>
+            </Web3Provider>
             </body>
         </html>
     );

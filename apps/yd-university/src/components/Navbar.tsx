@@ -5,6 +5,7 @@ import {
     ArrowRightOnRectangleIcon,
     GlobeAltIcon,
 } from "@heroicons/react/24/outline";
+import {ConnectKitButton} from "connectkit";
 
 const Navbar: React.FC = () => {
     const { t, i18n } = useTranslation();
@@ -46,6 +47,7 @@ const Navbar: React.FC = () => {
                 </a>
             </div>
             </div>
+            <ConnectKitButton />
             <div className="flex items-center space-x-4">
             {account ? (
                 <>
