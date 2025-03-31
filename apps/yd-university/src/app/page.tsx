@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import CourseCard from "../components/CourseCard";
 import { Course } from "../types/contracts";
+import RechargeCard from "@/components/buy-yd-token/RechargeCard";
 
 const MOCK_COURSES: Course[] = [
   {
@@ -79,32 +80,15 @@ const MOCK_COURSES: Course[] = [
   }
 ];
 
-const Home: React.FC = () => {
+const Home = () => {
   const { t } = useTranslation();
   const [account, setAccount] = useState<string | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [ethAmount, setEthAmount] = useState<string>("");
-  const [ydBalance, setYdBalance] = useState<number>(0);
 
   useEffect(() => {
     setCourses(MOCK_COURSES.filter((c) => c.isActive));
   }, []);
-
-  const handleRecharge = async () => {
-    if (!account) {
-      alert(t("pleaseConnectWallet"));
-      return;
-    }
-    if (!ethAmount || Number(ethAmount) <= 0) {
-      alert("Please enter a valid ETH amount");
-      return;
-    }
-    const eth = Number(ethAmount);
-    const yd = eth * 1000;
-    setYdBalance((prev) => prev + yd);
-    setEthAmount("");
-    alert(`Successfully recharged ${yd} YD (Mock)!`);
-  };
 
   return (
     <div className="min-h-screen">
@@ -150,7 +134,8 @@ const Home: React.FC = () => {
           </div>
           
           {/* Recharge module - Right side */}
-          <div className="recharge-card backdrop-blur-sm bg-[#1e1e2d]/60 p-6 rounded-xl border border-gray-700 order-1 md:order-2">
+          <RechargeCard />
+          {/*<div className="recharge-card backdrop-blur-sm bg-[#1e1e2d]/60 p-6 rounded-xl border border-gray-700 order-1 md:order-2">
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-xl font-semibold text-white">
                 {t("wallet.buyTokens")}
@@ -195,7 +180,7 @@ const Home: React.FC = () => {
             >
               {t("wallet.buyNow")}
             </button>
-          </div>
+          </div>*/}
           </div>
         </div>
 
