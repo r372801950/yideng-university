@@ -1,23 +1,6 @@
 // CourseCard.tsx
 import { motion } from "framer-motion";
-
-interface Course {
-  web2CourseId: string;
-  name: string;
-  price: string;
-  isActive: boolean;
-  creator: string;
-  id: number;
-  owned: boolean;
-}
-
-interface CourseCardProps {
-  course: Course;
-  index: number;
-  isLoading: boolean;
-  isApproving: boolean;
-  onPurchase: (course: Course) => void;
-}
+import {CourseCardProps} from "@/types";
 
 const CourseCard = ({ course, index, isLoading, isApproving, onPurchase }: CourseCardProps) => {
   return (

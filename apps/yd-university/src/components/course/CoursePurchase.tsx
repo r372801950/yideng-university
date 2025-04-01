@@ -8,21 +8,7 @@ import CourseMarketABI from "@/abis/CourseMarket.json";
 import {motion} from "framer-motion";
 import CourseCard from "@/components/course/CourseCard";
 import {t} from "i18next";
-
-interface Course {
-  id: number;
-  web2CourseId: string;
-  name: string;
-  price: string;
-  isActive: boolean;
-  creator: string;
-  owned: boolean;
-}
-
-interface CoursePurchaseProps {
-  yiDengTokenAddress: string;
-  courseMarketAddress: string;
-}
+import {Course} from "@/types";
 
 const CoursePurchase = () => {
   const yiDengTokenAddress='0x2021265E02F24fdC424098f2973D7CC792d87AEa', courseMarketAddress='0xE19f6eabb277012834D7cF31F74bF4eeD26DdA95'
@@ -33,45 +19,6 @@ const CoursePurchase = () => {
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
-
-  // 模拟课程数据 - 在实际应用中，这些数据应该从合约中获取
-  const mockCourses = [
-    { id: 1, web2CourseId: "jiang-test-web2-CourseId0001", name: "Web3 基础知识", price: "150", isActive: true, creator: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e", owned: false },
-    { id: 2, web2CourseId: "jiang-test-web2-CourseId0001", name: "Solidity 入门", price: "200", isActive: true, creator: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e", owned: false },
-    { id: 3, web2CourseId: "defi-masterclass", name: "DeFi 大师班", price: "300", isActive: true, creator: "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", owned: false },
-    { id: 4, web2CourseId: "nft-development", name: "NFT 开发工作坊", price: "250", isActive: true, creator: "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", owned: false },
-  ];
-
-  // 加载用户YD余额和已拥有的课程
-  /*const loadUserData = async () => {
-    if (!isConnected || !address || !window.ethereum) return;
-
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const tokenContract = new ethers.Contract(yiDengTokenAddress, YiDengTokenABI.abi, provider);
-      const marketContract = new ethers.Contract(courseMarketAddress, CourseMarketABI.abi, provider);
-
-
-
-      // 检查用户已拥有的课程
-      const updatedCourses = await Promise.all(
-        mockCourses.map(async (course) => {
-          try {
-            const isOwned = await marketContract.hasCourse(address, course.web2CourseId);
-            return { ...course, owned: isOwned };
-          } catch (err) {
-            console.error(`检查课程所有权错误 (${course.web2CourseId}):`, err);
-            return { ...course, owned: false };
-          }
-        })
-      );
-
-      setCourses(updatedCourses);
-    } catch (err: any) {
-      console.error("加载用户数据错误:", err);
-      setError(`加载用户数据失败: ${err.message || String(err)}`);
-    }
-  };*/
 
   const fetchCourses = async () => {
 
