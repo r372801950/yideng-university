@@ -3,85 +3,53 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
+import { motion } from "framer-motion";
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+import CourseCard from "@/components/course/CourseCard";
+import { t } from "i18next";
+import {
+  coursesAtom,
+  coursesErrorAtom,
+  coursesLoadingAtom,
+  fetchCoursesAtom,
+  yiDengTokenAddressAtom,
+  courseMarketAddressAtom,
+  userBalanceAtom,
+  fetchTokenInfoAtom
+} from "@/store/blockchain";
 import YiDengTokenABI from "@/abis/YiDengToken.json";
 import CourseMarketABI from "@/abis/CourseMarket.json";
-import {motion} from "framer-motion";
-import CourseCard from "@/components/course/CourseCard";
-import {t} from "i18next";
-import {Course} from "@/types";
+import { Course } from "@/types";
 
 const CoursePurchase = () => {
-  const yiDengTokenAddress='0x2021265E02F24fdC424098f2973D7CC792d87AEa', courseMarketAddress='0xE19f6eabb277012834D7cF31F74bF4eeD26DdA95'
   const { address, isConnected } = useAccount();
-  const [ydBalance, setYdBalance] = useState<string>("0");// todo jotai
-  const [courses, setCourses] = useState<Course[]>([]);
+
+  // Jotai 状态
+  const tokenAddress = useAtomValue(yiDengTokenAddressAtom);
+  const marketAddress = useAtomValue(courseMarketAddressAtom);
+  const userBalance = useAtomValue(userBalanceAtom);
+  const [courses] = useAtom(coursesAtom);
+  const [isCoursesLoading] = useAtom(coursesLoadingAtom);
+  const [coursesError] = useAtom(coursesErrorAtom);
+  const fetchCourses = useSetAtom(fetchCoursesAtom);
+  const fetchTokenInfo = useSetAtom(fetchTokenInfoAtom);
+
+  // 本地状态
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
-  const fetchCourses = async () => {
-
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const courseMarketContract = new ethers.Contract(
-        courseMarketAddress,
-        CourseMarketABI.abi,
-        provider
-      );
-
-      // const tokenContract = new ethers.Contract(yiDengTokenAddress, YiDengTokenABI.abi, provider);
-      // // 获取YD余额
-      // const balance = await tokenContract.balanceOf(address);
-      // setYdBalance(balance.toString());
-
-      // 获取课程总数
-      const courseCount = await courseMarketContract.courseCount();
-
-      // 获取所有课程信息
-      const coursesList: Course[] = [];
-
-      for (let i = 1; i <= courseCount.toNumber(); i++) {
-        const courseData = await courseMarketContract.courses(i);
-
-        // 检查用户是否拥有这个课程
-        let isOwned = false;
-        if (address) {
-          isOwned = await courseMarketContract.hasCourse(address, courseData.web2CourseId);
-        }
-
-        const course: Course = {
-          id: i,
-          web2CourseId: courseData.web2CourseId,
-          name: courseData.name,
-          price: ethers.utils.formatUnits(courseData.price, 0),
-          isActive: courseData.isActive,
-          creator: courseData.creator,
-          owned: isOwned
-        };
-
-        // 只添加激活的课程
-        if (course.isActive) {
-          coursesList.push(course);
-        }
-      }
-
-      setCourses(coursesList);
-    } catch (err: any) {
-      console.error("获取课程列表错误:", err);
-      setError("获取课程列表失败: " + (err.message || String(err)));
-    }
-  };
-
-
   // 组件加载和钱包连接变化时获取数据
   useEffect(() => {
+    if (window.ethereum) {
+      fetchCourses(address);
 
-    fetchCourses();
-    // if (isConnected) {
-    //   loadUserData();
-    // }
-  }, [isConnected, address]);
+      if (isConnected && address) {
+        fetchTokenInfo(address);
+      }
+    }
+  }, [isConnected, address, fetchCourses, fetchTokenInfo]);
 
   // 授权YD代币使用
   const approveTokens = async (coursePrice: string) => {
@@ -101,15 +69,15 @@ const CoursePurchase = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const tokenContract = new ethers.Contract(
-        yiDengTokenAddress,
+        tokenAddress,
         YiDengTokenABI.abi,
         signer
       );
 
       // 授权代币使用
       const tx = await tokenContract.approve(
-        courseMarketAddress,
-        ethers.utils.parseUnits(coursePrice, 0) // 根据YiDengToken的decimals设置
+        marketAddress,
+        ethers.utils.parseUnits(coursePrice, 0)
       );
 
       await tx.wait();
@@ -135,12 +103,12 @@ const CoursePurchase = () => {
     setSuccess("");
 
     try {
-      // 先检查余额是否足够 todo 检查余额 jotai
-      // if (BigInt(ydBalance) < BigInt(course.price)) {
-      //   setError(`YD余额不足。需要 ${course.price} YD，但您只有 ${ydBalance} YD`);
-      //   setIsLoading(false);
-      //   return;
-      // }
+      // 先检查余额是否足够
+      if (BigInt(userBalance) < BigInt(course.price)) {
+        setError(`YD余额不足。需要 ${course.price} YD，但您只有 ${userBalance} YD`);
+        setIsLoading(false);
+        return;
+      }
 
       // 授权使用代币
       const approved = await approveTokens(course.price);
@@ -156,7 +124,7 @@ const CoursePurchase = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const marketContract = new ethers.Contract(
-        courseMarketAddress,
+        marketAddress,
         CourseMarketABI.abi,
         signer
       );
@@ -168,7 +136,8 @@ const CoursePurchase = () => {
       setSuccess(`课程购买成功! 交易哈希: ${tx.hash}`);
 
       // 刷新数据
-      // await loadUserData();
+      fetchCourses(address);
+      fetchTokenInfo(address);
     } catch (err: any) {
       console.error("购买课程错误:", err);
       setError(`购买失败: ${err.message || String(err)}`);
@@ -177,18 +146,22 @@ const CoursePurchase = () => {
     }
   };
 
+  // 刷新课程列表
+  const refreshCourses = () => {
+    fetchCourses(address);
+  };
+
   return (
     <div className="container mx-auto">
-      {/*<div className="mb-6 flex justify-between items-center">*/}
-      {/*  <h2 className="text-2xl font-bold text-white">课程列表</h2>*/}
-      {/*  <div className="text-sm px-3 py-1 bg-[#4CAF50]/20 rounded-full text-[#4CAF50]">*/}
-      {/*    YD余额: {ydBalance}*/}
-      {/*  </div>*/}
-      {/*</div>*/}
-
       {error && (
         <div className="bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg relative mb-6">
           {error}
+        </div>
+      )}
+
+      {coursesError && (
+        <div className="bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg relative mb-6">
+          {coursesError}
         </div>
       )}
 
@@ -215,7 +188,7 @@ const CoursePurchase = () => {
           />
         ))}
 
-        {courses.length === 0 && (
+        {courses.length === 0 && !isCoursesLoading && (
           <motion.div
             className="col-span-3 text-center py-16 backdrop-blur-sm bg-[#1e1e2d]/40 rounded-xl border border-gray-700"
             initial={{ opacity: 0 }}
@@ -226,11 +199,22 @@ const CoursePurchase = () => {
               {t("home.noCourses")}
             </p>
             <button
-              // onClick={refreshCourses}
+              onClick={refreshCourses}
               className="mt-4 px-6 py-2 bg-[#4CAF50]/20 hover:bg-[#4CAF50]/30 text-[#4CAF50] rounded-full transition-all"
             >
               {t("home.refreshCourses")}
             </button>
+          </motion.div>
+        )}
+
+        {isCoursesLoading && (
+          <motion.div
+            className="col-span-3 text-center py-16"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4CAF50] mx-auto"></div>
+            <p className="text-gray-400 mt-4">加载课程中...</p>
           </motion.div>
         )}
       </motion.div>
