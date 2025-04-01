@@ -6,6 +6,8 @@ import Navbar from "../components/Navbar";
 import CourseCard from "../components/CourseCard";
 import { Course } from "../types/contracts";
 import RechargeCard from "@/components/buy-yd-token/RechargeCard";
+import CoursePurchase from "@/components/course/CoursePurchase";
+
 
 const MOCK_COURSES: Course[] = [
   {
@@ -196,45 +198,46 @@ const Home = () => {
             <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-500 to-transparent w-full max-w-[600px]"></div>
           </div>
         </div>
-        <div className="container mx-auto">
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, staggerChildren: 0.15 }}
-          >
-            {courses.map((course, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 12px 24px rgba(76, 175, 80, 0.15)",
-                }}
-                className="transform transition-all duration-300 backdrop-blur-sm bg-[#1e1e2d]/60 border border-gray-700 hover:border-[#4CAF50]/50 rounded-xl overflow-hidden shadow-lg hover:shadow-[#4CAF50]/20"
-              >
-                <CourseCard course={course} account={account} />
-              </motion.div>
-            ))}
-            {courses.length === 0 && (
-              <motion.div 
-                className="col-span-3 text-center py-16 backdrop-blur-sm bg-[#1e1e2d]/40 rounded-xl border border-gray-700"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-gray-400 text-lg">
-                  {t("home.noCourses")}
-                </p>
-                <button className="mt-4 px-6 py-2 bg-[#4CAF50]/20 hover:bg-[#4CAF50]/30 text-[#4CAF50] rounded-full transition-all">
-                  {t("home.refreshCourses")}
-                </button>
-              </motion.div>
-            )}
-          </motion.div>
-        </div>
+        <CoursePurchase />
+        {/*<div className="container mx-auto">*/}
+        {/*  <motion.div*/}
+        {/*    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"*/}
+        {/*    initial={{ opacity: 0 }}*/}
+        {/*    animate={{ opacity: 1 }}*/}
+        {/*    transition={{ duration: 0.6, staggerChildren: 0.15 }}*/}
+        {/*  >*/}
+        {/*    {courses.map((course, index) => (*/}
+        {/*      <motion.div*/}
+        {/*        key={index}*/}
+        {/*        initial={{ opacity: 0, y: 30 }}*/}
+        {/*        animate={{ opacity: 1, y: 0 }}*/}
+        {/*        transition={{ duration: 0.5, delay: index * 0.1 }}*/}
+        {/*        whileHover={{*/}
+        {/*          scale: 1.05,*/}
+        {/*          boxShadow: "0 12px 24px rgba(76, 175, 80, 0.15)",*/}
+        {/*        }}*/}
+        {/*        className="transform transition-all duration-300 backdrop-blur-sm bg-[#1e1e2d]/60 border border-gray-700 hover:border-[#4CAF50]/50 rounded-xl overflow-hidden shadow-lg hover:shadow-[#4CAF50]/20"*/}
+        {/*      >*/}
+        {/*        <CourseCard course={course} account={account} />*/}
+        {/*      </motion.div>*/}
+        {/*    ))}*/}
+        {/*    {courses.length === 0 && (*/}
+        {/*      <motion.div */}
+        {/*        className="col-span-3 text-center py-16 backdrop-blur-sm bg-[#1e1e2d]/40 rounded-xl border border-gray-700"*/}
+        {/*        initial={{ opacity: 0 }}*/}
+        {/*        animate={{ opacity: 1 }}*/}
+        {/*        transition={{ duration: 0.5 }}*/}
+        {/*      >*/}
+        {/*        <p className="text-gray-400 text-lg">*/}
+        {/*          {t("home.noCourses")}*/}
+        {/*        </p>*/}
+        {/*        <button className="mt-4 px-6 py-2 bg-[#4CAF50]/20 hover:bg-[#4CAF50]/30 text-[#4CAF50] rounded-full transition-all">*/}
+        {/*          {t("home.refreshCourses")}*/}
+        {/*        </button>*/}
+        {/*      </motion.div>*/}
+        {/*    )}*/}
+        {/*  </motion.div>*/}
+        {/*</div>*/}
         
     </div>
   );
