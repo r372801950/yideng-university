@@ -10,6 +10,7 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import type { Container } from "@tsparticles/engine";
 import {Web3Provider} from "@/components/Web3Provider";
+import SimpleWebVitalsMonitor from "@/components/web-vitals/SimpleWebVitalsMonitor";
 
 i18n.use(initReactI18next).init({
     resources: {
@@ -73,6 +74,7 @@ export default function RootLayout({
                                 className="particle-background"
                             />
                         )}
+                        <SimpleWebVitalsMonitor />
                         {children}
                     </div>
                 </I18nextProvider>
