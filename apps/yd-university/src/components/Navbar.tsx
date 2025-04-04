@@ -7,6 +7,17 @@ import {
 } from "@heroicons/react/24/outline";
 import {ConnectKitButton} from "connectkit";
 
+const customButtonStyles = {
+  "--ck-connectbutton-background": "#2A2A3E",
+  "--ck-connectbutton-hover-background": "#3A3A4E",
+  "--ck-connectbutton-color": "white",
+  "--ck-connectbutton-hover-color": "white",
+  "--ck-connectbutton-border-radius": "0.5rem",
+  "--ck-connectbutton-font-size": "0.875rem",
+  "--ck-connectbutton-padding": "0.5rem 0.75rem",
+  "--ck-font-family": "inherit"
+};
+
 const Navbar: React.FC = () => {
     const { t, i18n } = useTranslation();
     const [account, setAccount] = useState<string | null>(null);
@@ -47,30 +58,26 @@ const Navbar: React.FC = () => {
                 </a>
             </div>
             </div>
-            <ConnectKitButton />
+
             <div className="flex items-center space-x-4">
-            {account ? (
-                <>
-                <span className="text-sm text-gray-400">
-                    {account.slice(0, 6)}...{account.slice(-4)}
-                </span>
-                <button
-                    onClick={disconnectWallet}
-                    className="flex items-center bg-[#2A2A3E] px-3 py-2 rounded-lg hover:bg-[#3A3A4E] transition"
-                >
-                    <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2" />
-                    <span>{t("navbar.disconnect")}</span>
-                </button>
-                </>
-            ) : (
-                <button
-                onClick={connectWallet}
-                className="flex items-center bg-[#2A2A3E] px-3 py-2 rounded-lg hover:bg-[#3A3A4E] transition"
-                >
-                <WalletIcon className="w-5 h-5 mr-2" />
-                <span>{t("navbar.connect")}</span>
-                </button>
-            )}
+              <ConnectKitButton.Custom>
+                {({ isConnected, isConnecting, show, hide, address, ensName }) => {
+                  return (
+                    <button
+                      onClick={show}
+                      className="flex items-center bg-[#2A2A3E] px-3 py-2 rounded-lg hover:bg-[#3A3A4E] transition"
+                    >
+                      <WalletIcon className="w-5 h-5 mr-2" />
+                      <span>
+                      {isConnected
+                        ? `${address?.slice(0, 6)}...${address?.slice(-4)}`
+                        : t("navbar.connect")
+                      }
+                    </span>
+                    </button>
+                  );
+                }}
+              </ConnectKitButton.Custom>
             <div className="relative group">
                 <button className="flex items-center bg-[#2A2A3E] px-3 py-2 rounded-lg hover:bg-[#3A3A4E] transition">
                 <GlobeAltIcon className="w-5 h-5 mr-2" />
