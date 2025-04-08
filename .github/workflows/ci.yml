@@ -30,11 +30,11 @@ jobs:
         run: pnpm install
 
       - name: Lint code
-        working-directory: yideng-university/apps/yd-university
+        working-directory: apps/yd-university
         run: pnpm lint
 
       - name: Build project
-        working-directory: yideng-university/apps/yd-university
+        working-directory: apps/yd-university
         run: pnpm build
 
       - name: Archive build artifacts
@@ -42,8 +42,8 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            yideng-university/apps/yd-university/.next
-            yideng-university/apps/yd-university/public
+            apps/yd-university/.next
+            apps/yd-university/public
           retention-days: 7
 
     # 当你有云服务器时，取消以下步骤的注释
@@ -55,9 +55,9 @@ jobs:
     #     host: ${{ secrets.REMOTE_HOST }}
     #     username: ${{ secrets.REMOTE_USER }}
     #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-    #     source: "yideng-university/apps/yd-university/.next/,yideng-university/apps/yd-university/public/,yideng-university/apps/yd-university/package.json"
+    #     source: "apps/yd-university/.next/,apps/yd-university/public/,apps/yd-university/package.json"
     #     target: "/path/to/deployment/directory"
-    #     strip_components: 3  # 移除前3层目录结构
+    #     strip_components: 2  # 移除前2层目录结构
 
     # - name: Restart application
     #   if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
